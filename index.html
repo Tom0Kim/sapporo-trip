@@ -37,11 +37,23 @@
 .leaflet-bottom .leaflet-control{margin-bottom:10px}
 .leaflet-left .leaflet-control{margin-left:10px}
 .leaflet-grab{cursor:grab}.leaflet-dragging .leaflet-grab{cursor:grabbing}
-.leaflet-touch .leaflet-bar a{width:30px;height:30px;line-height:30px}
-.leaflet-bar{box-shadow:0 1px 5px rgba(0,0,0,.4);border-radius:8px;background:#fff;overflow:hidden}
-.leaflet-bar a{display:block;width:30px;height:30px;line-height:30px;text-align:center;
-  text-decoration:none;color:#222;font:700 17px/30px sans-serif;border-bottom:1px solid #e4e4e4}
+.leaflet-bar{
+  background:var(--card);border:2.5px solid var(--ink);border-radius:999px;
+  box-shadow:3px 3px 0 var(--ink);overflow:hidden;
+}
+.leaflet-bar a{
+  display:block;width:38px;height:42px;text-align:center;text-decoration:none;
+  background:var(--card);color:var(--ink);
+  font:800 25px/40px system-ui,-apple-system,sans-serif;
+  border-bottom:1px solid var(--hair);
+}
 .leaflet-bar a:last-child{border-bottom:none}
+.leaflet-bar a:hover{background:var(--card)}
+.leaflet-bar a:active{background:var(--hair)}
+.leaflet-bar a.leaflet-disabled{background:var(--card);color:var(--sub);cursor:default}
+.leaflet-touch .leaflet-bar a{width:38px;height:42px;line-height:42px}
+.leaflet-left .leaflet-control{margin-left:12px}
+.leaflet-top .leaflet-control{margin-top:12px}
 .leaflet-control-attribution{background:rgba(255,255,255,.75);padding:0 5px;font-size:10px;color:#555;border-radius:4px 0 0 0}
 .leaflet-control-attribution a{color:#0b7;text-decoration:none}
 .leaflet-fade-anim .leaflet-popup{opacity:0;transition:opacity .2s}
@@ -109,27 +121,54 @@ body{
   font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased;
 }
 
-/* ===== 상단 시계 ===== */
-.clocks{
+/* ===== 상단바 ===== */
+.topbar{
   position:sticky;top:env(safe-area-inset-top,0px);z-index:1100;
   background:var(--bg);border-bottom:1px solid var(--hair);
-  display:flex;align-items:center;gap:22px;padding:9px 16px;
+  padding:8px 14px 9px;
 }
-.clock{display:flex;align-items:center;gap:7px}
-.clock .ic{font-size:17px;line-height:1}
-.clock .tx b{display:block;font-size:17px;font-weight:700;letter-spacing:-.02em;
+.chips{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.chip{display:flex;align-items:center;gap:7px}
+.chip .ic{font-size:15px;line-height:1}
+.chip .tx b{display:block;font-size:15.5px;font-weight:700;letter-spacing:-.02em;
   font-variant-numeric:tabular-nums;line-height:1.15}
-.clock .tx span{display:block;font-size:11px;color:var(--sub);line-height:1.2}
-.clock .tz{margin-left:auto;font-size:11px;color:var(--sub)}
+.chip .tx span{display:block;font-size:10.5px;color:var(--sub);line-height:1.2}
+.searchwrap{position:relative;margin-top:8px}
+#q{
+  width:100%;font:inherit;font-size:13.5px;color:var(--ink);
+  background:var(--card);border:1px solid var(--hair);border-radius:999px;
+  padding:8px 54px 8px 34px;-webkit-appearance:none;appearance:none;
+}
+#q::placeholder{color:var(--sub)}
+#q:focus{outline:none;border-color:var(--coral)}
+.searchwrap::before{
+  content:"";position:absolute;left:14px;top:50%;width:9px;height:9px;
+  margin-top:-6px;border:1.6px solid var(--sub);border-radius:50%;
+}
+.searchwrap::after{
+  content:"";position:absolute;left:22px;top:50%;width:5px;height:1.6px;
+  margin-top:2px;background:var(--sub);transform:rotate(45deg);
+}
+#qcount{
+  position:absolute;right:14px;top:50%;transform:translateY(-50%);
+  font-size:11.5px;color:var(--coral);font-weight:500;pointer-events:none;
+}
+body.searching .concept,body.searching .drivebar,body.searching .wave{display:none}
+body.searching .dayhead .chev{display:none}
 
 /* ===== 지도 ===== */
 #mapwrap{
-  position:sticky;top:calc(env(safe-area-inset-top,0px) + 53px);z-index:900;
-  background:var(--ocean);border-bottom:1px solid var(--hair);
-  height:42vh;min-height:230px;max-height:420px;overflow:hidden;
-  transition:height .25s ease,min-height .25s ease;
+  position:sticky;top:calc(env(safe-area-inset-top,0px) + 96px);z-index:900;
+  background:var(--bg);padding:10px 12px 12px;
 }
-#mapwrap.folded{height:0;min-height:0;border-bottom:none}
+#mapbox{
+  position:relative;overflow:hidden;
+  height:42vh;min-height:230px;max-height:420px;
+  border:2.5px solid var(--ink);border-radius:20px;background:var(--ocean);
+  transition:height .25s ease,min-height .25s ease,border-width .25s ease;
+}
+#mapwrap.folded{padding-bottom:0}
+#mapwrap.folded #mapbox{height:0;min-height:0;border-width:0}
 #leaf{position:absolute;inset:0}
 #svgmap{position:absolute;inset:0;width:100%;height:100%;display:block}
 .dayfilter{
@@ -144,13 +183,29 @@ body{
   background:rgba(255,255,255,.94);color:#2A2722;border:1px solid rgba(0,0,0,.12);
 }
 .dayfilter button[aria-pressed="true"]{background:#1F1D1A;color:#fff;border-color:#1F1D1A}
-#foldbtn{
-  position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:1200;
-  font:inherit;font-size:12.5px;font-weight:500;
-  background:var(--card);color:var(--ink);
-  border:1px solid var(--hair);border-radius:999px;padding:8px 15px;
-  box-shadow:0 2px 12px rgba(31,29,26,.18);cursor:pointer;
+#mapbusy{
+  position:absolute;left:50%;top:14px;transform:translateX(-50%);z-index:1015;
+  font-size:11.5px;font-weight:500;color:var(--ink);
+  background:rgba(255,255,255,.93);border:1px solid rgba(0,0,0,.12);
+  border-radius:999px;padding:5px 12px;box-shadow:0 1px 6px rgba(0,0,0,.18);
+  pointer-events:none;
 }
+#foldbtn{
+  position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:1200;
+  display:flex;align-items:center;gap:7px;
+  font:inherit;font-size:13.5px;font-weight:700;letter-spacing:-.01em;
+  background:var(--ink);color:var(--bg);
+  border:none;border-radius:999px;padding:11px 18px;
+  box-shadow:0 4px 16px rgba(31,29,26,.34), 0 0 0 3px rgba(255,255,255,.55);
+  cursor:pointer;transition:transform .12s;
+}
+#foldbtn:active{transform:scale(.96)}
+#foldbtn::before{
+  content:"";width:9px;height:9px;flex:0 0 auto;
+  border-right:2px solid currentColor;border-bottom:2px solid currentColor;
+  transform:rotate(-135deg);margin-top:3px;
+}
+#foldbtn.down::before{transform:rotate(45deg);margin-top:-3px}
 
 /* ===== 챕터 ===== */
 .wrap{max-width:620px;margin:0 auto;padding:0 16px 96px}
@@ -163,25 +218,47 @@ body{
 .chapter .rom{font-size:11.5px;letter-spacing:.24em;color:var(--sub)}
 .chapter .lead{font-family:"Gaegu",cursive;font-size:20px;line-height:1.55;margin:16px 0 0;letter-spacing:.01em}
 .chapter .meta{font-size:12.5px;color:var(--sub);margin-top:12px}
-.readpill{
+/* ===== 지역 소개 ===== */
+.intro{
+  border:2px solid var(--ink);border-radius:20px;background:var(--card);
+  margin-top:20px;overflow:hidden;
+}
+.intro > button{
   display:flex;align-items:center;justify-content:space-between;gap:12px;
-  border:1px solid var(--hair);border-radius:12px;background:var(--card);
-  padding:13px 15px;margin-top:16px;width:100%;
-  font:inherit;font-size:14px;font-weight:500;color:var(--ink);cursor:pointer;text-align:left;
+  width:100%;padding:14px 17px;margin:0;
+  background:none;border:none;font:inherit;color:inherit;
+  font-size:15.5px;font-weight:700;letter-spacing:-.01em;text-align:left;cursor:pointer;
 }
-.readpill span{font-size:12.5px;color:var(--coral);font-weight:500;flex:0 0 auto}
-.readbody{
-  border:1px solid var(--hair);border-top:none;border-radius:0 0 12px 12px;
-  background:var(--card);padding:0 15px 15px;margin-top:-1px;font-size:13.5px;color:var(--sub);
+.intro > button span{font-size:12.5px;font-weight:500;color:var(--coral);flex:0 0 auto}
+.introbody{padding:0 17px 16px}
+.introbody p{margin:0 0 13px;font-size:14px;line-height:1.72;color:var(--ink)}
+.introbody p:last-of-type{margin-bottom:0}
+.introbody h4{
+  margin:18px 0 8px;font-size:12px;font-weight:700;color:var(--sub);letter-spacing:.01em;
 }
-.readbody p{margin:11px 0 0;line-height:1.7}
-.readbody strong{color:var(--ink);font-weight:500}
+.introbody ul{margin:0;padding-left:19px}
+.introbody li{font-size:13.5px;line-height:1.66;margin-bottom:7px;color:var(--ink)}
+.introbody li:last-child{margin-bottom:0}
+.introbody li b{font-weight:700}
+.day-intro{margin-top:0;margin-bottom:14px}
+body.searching .intro{display:none}
 
 /* ===== 날짜 헤더 ===== */
 .dayhead{
-  display:flex;align-items:center;gap:8px;
-  padding:30px 0 0;scroll-margin-top:calc(env(safe-area-inset-top,0px) + 56px);
+  display:flex;align-items:center;gap:8px;width:100%;
+  padding:30px 0 4px;margin:0;
+  background:none;border:none;font:inherit;color:inherit;
+  text-align:left;cursor:pointer;
+  scroll-margin-top:calc(env(safe-area-inset-top,0px) + 56px);
 }
+.dayhead .chev{
+  flex:0 0 auto;width:8px;height:8px;margin-left:10px;margin-top:-4px;
+  border-right:1.6px solid var(--sub);border-bottom:1.6px solid var(--sub);
+  transform:rotate(45deg);transition:transform .18s;
+}
+.dayhead[aria-expanded="false"] .chev{transform:rotate(-45deg);margin-top:2px}
+.dayhead[aria-expanded="false"]{opacity:.72}
+.daybody[hidden]{display:none}
 .dayhead .dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
 .dayhead .ic{font-size:16px;line-height:1}
 .dayhead .city{font-size:13.5px;font-weight:500}
@@ -218,6 +295,15 @@ body{
   content:"";position:absolute;left:8px;top:13px;bottom:13px;width:5px;
   border-radius:3px;background:var(--coral);
 }
+.ev{transition:transform .14s ease, box-shadow .14s ease, border-color .14s ease}
+@media (hover:hover){
+  .ev[data-lat]:hover{
+    transform:translateY(-2px);
+    border-color:var(--ink);
+    box-shadow:0 1px 2px rgba(31,29,26,.06), 0 10px 22px -14px rgba(31,29,26,.5);
+  }
+}
+.ev[data-lat]:active{transform:translateY(0);transition-duration:.06s}
 .ev.skip{border-style:dashed;box-shadow:none;background:transparent}
 .ev.skip::before{opacity:.4}
 .ev.now{border-color:var(--coral)}
@@ -314,22 +400,27 @@ tr:last-child td,tr:last-child th{border-bottom:none;color:var(--ink);font-weigh
 </head>
 <body>
 
-<div class="clocks">
-  <div class="clock">
-    <span class="ic">🏠</span>
-    <span class="tx"><b id="ck-seoul">--:--</b><span>서울</span></span>
+<div class="topbar">
+  <div class="chips">
+    <div class="chip"><span class="ic">🛫</span>
+      <span class="tx"><b id="fl-dep">—</b><span>ZE625 · 인천공항 출발 09:20</span></span></div>
+    <div class="chip"><span class="ic">🛬</span>
+      <span class="tx"><b id="fl-ret">—</b><span>ZE626 · 신치토세 출발 12:55</span></span></div>
+    <div class="chip"><span class="ic">💴</span>
+      <span class="tx"><b id="fx">₩872</b><span>100엔 기준</span></span></div>
   </div>
-  <div class="clock">
-    <span class="ic">🇯🇵</span>
-    <span class="tx"><b id="ck-spk">--:--</b><span>삿포로</span></span>
+  <div class="searchwrap">
+    <input id="q" type="search" placeholder="일정 검색" autocomplete="off" spellcheck="false">
+    <span id="qcount"></span>
   </div>
-  <span class="tz">시차 없음</span>
 </div>
 
 <div id="mapwrap">
-  <div id="leaf"></div>
-  <svg id="svgmap" aria-label="여행 경로 지도"></svg>
-  <div class="dayfilter" id="dayfilter"></div>
+  <div id="mapbox">
+    <div id="leaf"></div>
+    <svg id="svgmap" aria-label="여행 경로 지도"></svg>
+    <div class="dayfilter" id="dayfilter"></div>
+  </div>
 </div>
 <button id="foldbtn" type="button">지도 접기</button>
 
@@ -339,18 +430,30 @@ tr:last-child td,tr:last-child th{border-bottom:none;color:var(--ink);font-weigh
     <div class="eyebrow">CHAPTER 1</div>
     <h1>삿포로</h1>
     <div class="rom">SAPPORO</div>
-    <p class="lead">샤코탄 블루의 바다와 비에이의 꽃 언덕, 그리고 마지막 밤의 조잔케이 온천</p>
-    <div class="meta">09/26 – 09/29 · 3박 4일 · 32개 일정 · 렌터카 850km</div>
-    <button class="readpill" id="readtoggle" aria-expanded="false">
-      이번 여행을 이렇게 짠 이유
-      <span>읽어보기</span>
+    <p class="lead">샤코탄 블루의 바다와 비에이의 꽃 언덕, 그리고 마지막 밤의 후라노 온천</p>
+  </div>
+
+  <div class="intro">
+    <button type="button" id="introtoggle" aria-expanded="false">
+      삿포로와 홋카이도<span>읽어보기</span>
     </button>
-    <div class="readbody" id="readbody" hidden>
-      <p>실질적으로 쓸 수 있는 시간은 <strong>꽉 찬 이틀과 반나절 두 번</strong>입니다. 첫날은 11:50 도착이라 오후만, 마지막 날은 12:55 출발이라 아침만 남습니다.</p>
-      <p><strong>하코다테는 빼야 합니다.</strong> 편도 300km, 차로 4시간 30분에서 5시간입니다. 특급 호쿠토도 편도 3시간 40분이라 왕복만 9시간입니다.</p>
-      <p>샤코탄은 서쪽, 비에이와 후라노는 동쪽이라 <strong>각각 하루가 꼬박</strong> 듭니다. 그래서 2일차를 서쪽, 3일차를 동쪽으로 갈랐습니다.</p>
-      <p>모이와야마를 첫날 밤으로 옮긴 이유는 <strong>오타루 가스등과 시간대가 겹치기</strong> 때문입니다. 둘 다 해질녘이 본판이라 같은 날 저녁에 넣을 수 없습니다.</p>
-      <p>3일차는 운전 6시간 30분에 14시간 일정입니다. 무리인 걸 알지만 팜 도미타와 사계채의 언덕을 넣으려면 이 방법밖에 없습니다. <strong>전날 21:30 취침이 유일한 안전장치</strong>입니다.</p>
+    <div class="introbody" id="introbody" hidden>
+      <p>홋카이도는 원래 아이누의 땅이었다. 에도 시대까지는 에조치(蝦夷地)라 불렸고, 지금의 이름은 1869년 메이지 정부가 붙였다. 삿포로라는 지명도 아이누어 "삿 포로 페츠", 마르고 큰 강에서 왔다는 설이 유력하다.</p>
+      <p>같은 해 개척사(開拓使)가 설치되면서 삿포로는 미국식 계획도시로 지어졌다. 바둑판 도로와 북1조 서2정목 같은 좌표식 주소가 그때 만들어진 것이다. 미국인 고문들이 농업과 도시 설계를 자문했고, 삿포로 농학교 초대 교감 윌리엄 클라크가 남긴 "Boys, be ambitious"는 지금도 홋카이도대학의 상징이다.</p>
+      <p>1876년 개척사가 세운 맥주 양조소가 삿포로 맥주의 시작이다. 라벨의 별은 개척사 깃발에 있던 북극성에서 왔다. 1888년에 지어진 구 홋카이도청사는 미국 매사추세츠주 의사당을 본뜬 붉은 벽돌 건물로, 개척기 삿포로가 어디를 보고 있었는지를 보여 준다.</p>
+      <p>1972년 삿포로 동계올림픽은 아시아 최초의 동계올림픽이었다. 지하철과 오도리 지하가가 이때 정비되면서 지금의 도심 골격이 완성됐다.</p>
+
+      <h4>알고 가면 좋은 것</h4>
+      <ul>
+        <li>주소가 좌표다. <b>오도리를 기준으로 북·남</b>, <b>창성천을 기준으로 동·서</b>를 세니, 북3조 서4정목이면 오도리에서 북쪽으로 세 블록, 창성천에서 서쪽으로 네 블록이다</li>
+        <li>홋카이도의 가을은 본토보다 한 달 빠르다. 9월 말 삿포로 아침은 10도 안팎, 비에이 산간은 5도까지 떨어진다</li>
+        <li>운전은 좌측통행이다. 한국의 좌회전에 해당하는 <b>우회전이 반대 차선을 가로지르는 동작</b>이라 가장 헷갈린다</li>
+        <li>해질녘부터 밤까지 지방도에 사슴이 나온다. 홋카이도에서 실제로 잦은 사고다</li>
+        <li>세이코마트는 홋카이도에만 있는 편의점이다. 자체 브랜드 우유와 와인이 싸고 좋다</li>
+        <li>온천은 몸을 씻고 들어가고, 수건은 탕에 넣지 않는다. 문신이 있으면 제한하는 곳이 있다</li>
+        <li>성게는 6~8월이 제철이라 9월엔 없다. 대신 연어, 이크라, 가리비가 한창이다</li>
+        <li>숙박세와 온천 입욕세(1인 150엔 정도)는 표시 가격에 빠져 있고 현지에서 따로 낸다</li>
+      </ul>
     </div>
   </div>
 
@@ -361,59 +464,6 @@ tr:last-child td,tr:last-child th{border-bottom:none;color:var(--ink);font-weigh
   <div id="checklist"></div>
   <button class="reset" id="reset">체크 전부 지우기</button>
 
-  <h2 class="sec">예약과 비용</h2>
-  <p class="sub">확인해야 할 것들</p>
-
-  <details class="fold" open>
-    <summary>항공 · 렌터카 · 숙박</summary>
-    <div class="in">
-      <p><strong>항공</strong><br>9/26 인천 09:20 → 삿포로 11:50<br>9/29 삿포로 12:55 → 인천 16:00</p>
-      <p><strong>렌터카</strong><br>9/26 13:30 픽업, 9/29 10:30 반납. 68시간 30분이라 72시간 안에 들어가 3일 요금으로 계산됩니다. 오전에 픽업하면 4일 요금이 되니 13:30이 딱 맞는 지점입니다. 차종은 중형 또는 왜건급으로. 3인에 캐리어 3개면 소형은 트렁크가 빠듯합니다.</p>
-      <p><strong>숙박</strong><br>9/26, 9/27 삿포로 시내 2박 (주차 가능한 곳)<br>9/28 조잔케이 온천 1박</p>
-    </div>
-  </details>
-
-  <details class="fold">
-    <summary>예산 (중형 · 왜건 기준)</summary>
-    <div class="in">
-      <div class="tblwrap"><table>
-        <tr><th>항목</th><th class="n">엔</th></tr>
-        <tr><td>대여료 3일</td><td class="n">18,000~28,000</td></tr>
-        <tr><td>면책보상 · NOC</td><td class="n">3,000~8,000</td></tr>
-        <tr><td>HEP 4일권 + ETC</td><td class="n">8,000</td></tr>
-        <tr><td>주유비 (약 850km)</td><td class="n">9,000~11,000</td></tr>
-        <tr><td>주차비</td><td class="n">4,000~6,000</td></tr>
-        <tr><th>합계</th><td class="n">42,000~61,000</td></tr>
-      </table></div>
-      <p>토요타 공식 정가가 3일 23,100엔(컴팩트)이니 그게 기준선입니다. 타비라이, 라쿠텐 트래블 렌터카, 클룩을 같은 조건으로 검색해 비교하세요.</p>
-    </div>
-  </details>
-
-  <details class="fold">
-    <summary>고속도로 패스 (HEP)</summary>
-    <div class="in">
-      <p>최소 기간이 4일이고 대여 기간 전체에 대해 구매해야 하므로, 3일 대여라도 <strong>4일권 7,700엔</strong>을 사게 됩니다.</p>
-      <p>이번 일정의 실제 통행료는 공항↔삿포로, 삿포로↔요이치 왕복, 삿포로↔아사히카와와 미카사 왕복을 합쳐 11,000~12,500엔 정도입니다. 4,000엔 가까이 이득이니 사는 게 맞습니다. ETC 카드 대여료 300~500엔 별도.</p>
-    </div>
-  </details>
-
-  <details class="fold">
-    <summary>내비게이션</summary>
-    <div class="in">
-      <p><strong>주행 안내는 차량 내장 내비.</strong> 유료도로 판단이 정확하고 통신이 끊겨도 작동합니다. 한국어 내비 장착 차량을 예약 시 요청하세요.</p>
-      <p><strong>목적지 입력은 맵코드 우선.</strong> 숫자 10자리로 좌표를 찍는 방식이라 일본 주소 입력보다 정확합니다. 청의 호수나 흰수염 폭포처럼 주차장이 본체와 떨어진 곳에서 특히 유용합니다.</p>
-      <p><strong>구글맵은 경로 미리보기와 영업시간 확인용.</strong> 주행 중 의존하면 비에이에서 농로로 안내받는 일이 있습니다. 샤코탄과 시로가네는 통신이 약하니 오프라인 지도를 미리 내려받아 두세요.</p>
-    </div>
-  </details>
-
-  <details class="fold">
-    <summary>일정이 밀릴 때 빼는 순서</summary>
-    <div class="in">
-      <p><strong>1. 모이와야마 (1일차)</strong> — TV타워로 삿포로 야경을 이미 봤으니 손실이 가장 작습니다.</p>
-      <p><strong>2. 카무이곶 끝까지 걷기 (2일차)</strong> — 전망광장에서 보고 1시간을 회수합니다.</p>
-      <p><strong>3. 닝구르 테라스 (3일차)</strong> — 동선의 마지막이라 늦어지면 자동으로 압박을 받습니다.</p>
-    </div>
-  </details>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js" defer></script>
@@ -427,9 +477,15 @@ tr:last-child td,tr:last-child th{border-bottom:none;color:var(--ink);font-weigh
 var DAYS = [
 {
   n:1, date:"9월 26일 (토)", city:"삿포로", ic:"🍺", color:"#E0503F",
-  temp:"평년 11~21°", drive:"1시간", km:"80km",
-  concept:"도착, 그리고 삿포로 시내 한 바퀴",
-  must:["맥주 박물관은 오늘뿐"],
+  temp:"평년 11~21°", drive:"1시간", km:"70km",
+  concept:"도착, 그리고 오텀 페스트의 밤",
+  must:["맥주 박물관은 오늘뿐","오텀 페스트 라스트 오더 20:00"],
+  intro:{title:"삿포로 도심, 개척기가 남긴 것",
+    p:["오도리 공원은 공원으로 만든 게 아니다. 1871년 개척사가 화재가 번지는 것을 막으려 도심을 남북으로 가르는 폭 105m의 빈 띠를 남긴 것이 시작이었다. 방화선이 공원이 되고, 그 띠가 지금 삿포로 주소의 남북 기준선이 됐다.",
+       "시계탑은 1878년 삿포로 농학교 연무장으로 지어졌다. 지금도 같은 기계식 시계가 추의 힘으로 돌아간다. 스스키노는 같은 시기에 개척 인부들을 위해 허가된 유곽에서 출발해 지금은 일본에서 손꼽히는 번화가가 됐다."],
+    tips:["TV타워 전망대는 90.38m. 오도리 지하가로 지하철역까지 이어져 비가 와도 젖지 않고 이동할 수 있다",
+          "오텀 페스트 기간에는 오도리 4~8, 10, 11초메가 전부 장터다. 9초메만 비어 있다",
+          "도심 주소는 오도리 기준 북·남, 창성천 기준 동·서로 읽는다"]},
   stops:[
     {t:"11:50",e:"13:30",d:"1시간 40분",cat:"이동",title:"신치토세공항 도착, 입국심사",
      place:"국제선 터미널 → 국내선 1층",
@@ -439,37 +495,54 @@ var DAYS = [
      place:"공항 밖 영업소, 셔틀 9~15분",hours:"예약 13:30",
      note:"카운터 접수 후 셔틀과 서류에 30~40분. 실제 출발은 14:00~14:20입니다. 늦게 받아도 추가 요금은 없습니다. 국제운전면허증·여권·한국면허증 3종을 반드시 지참하세요.",
      lat:42.7869,lon:141.6664,q:"New Chitose Airport rental car"},
-    {t:"14:20",e:"15:00",d:"40분",cat:"이동",title:"공항에서 삿포로 시내",
-     place:"60km · 도오 고속도로",
-     note:"치토세IC에서 기타히로시마IC를 거쳐 시내로."},
-    {t:"15:00",e:"16:20",d:"1시간 20분",cat:"관광",title:"삿포로 맥주 박물관",
+    {t:"14:20",e:"15:00",d:"40분",cat:"이동",title:"공항에서 숙소로",
+     place:"신치토세공항 → 시로이시구 (약 40분)",
+     note:"체크인부터 먼저 하고 차를 세운 뒤, 이후 일정은 전철과 도보로 움직입니다."},
+    {t:"15:00",e:"15:25",d:"25분",cat:"숙소",title:"숙소 체크인 · 주차",
+     place:"Kana's Apartment · 시로이시구 기타고5조 6초메3-12",hours:"체크인 15:00 이후 · 체크아웃 9/28 10:00",
+     note:"에어비앤비 집 전체 사용. 무료 주차장이 있습니다. 여기서 차를 대고 이후는 도보와 전철로 움직입니다. 오텀 페스트 기간 토요일 밤에 오도리 주변 코인파킹은 자리를 찾기 어렵고, 무엇보다 운전자가 술을 마실 수 있게 됩니다.",
+     lat:43.0394,lon:141.3808,q:"Shiroishi Ward 6-chome-3-12 Kitago 5 Jo Sapporo"},
+    {t:"15:25",e:"15:50",d:"25분",cat:"이동",title:"숙소에서 삿포로역으로",
+     place:"시로이시역 → 삿포로역, 전철 7분 (환승 없음)",
+     note:"숙소에서 시로이시역까지 도보 5분, JR 하코다테 본선으로 삿포로역까지 7분. 대기·환승구 이동을 포함해 넉넉히 25분 잡았습니다."},
+    {t:"15:50",e:"16:10",d:"20분",cat:"이동",title:"삿포로역에서 맥주 박물관으로",
+     place:"도보 약 1.7km",
+     note:"삿포로역 동쪽으로 쭉 걸어가면 됩니다."},
+    {t:"16:10",e:"16:55",d:"45분",cat:"관광",title:"삿포로 맥주 박물관",
      place:"삿포로시 히가시구 기타7조 히가시9초메",hours:"11:00~18:00 · 마지막 입장 17:30",
-     note:"월요일 휴관이라 이번 여행에서 오늘이 유일한 기회입니다. 전시 관람은 무료이고 예약이 필요 없습니다. 스타홀 시음은 유료. 주차 무료. 운전자는 무알콜로.",
+     note:"월요일 휴관이라 이번 여행에서 오늘이 유일한 기회입니다. 전시 관람은 무료이고 예약이 필요 없습니다. 스타홀 시음은 유료인데, 오늘은 차를 이미 숙소에 세워뒀으니 운전자도 마실 수 있습니다.",
      lat:43.0716,lon:141.3706,q:"삿포로 맥주 박물관"},
-    {t:"16:30",e:"17:30",d:"1시간",cat:"쇼핑",title:"삿포로 팩토리",
-     place:"박물관에서 차로 5분",
-     note:"아트리움에서 쉬면서 쇼핑. 첫날이니 무리하지 않고 한 시간 정도.",
+    {t:"16:55",e:"17:10",d:"15분",cat:"이동",title:"맥주 박물관에서 삿포로 팩토리로",
+     place:"도보 약 1km",
+     note:""},
+    {t:"17:10",e:"17:40",d:"30분",cat:"쇼핑",title:"삿포로 팩토리",
+     place:"맥주 박물관에서 도보 15분",
+     note:"아트리움에서 잠시 쉬면서 쇼핑. 저녁 일정이 있으니 30분 정도로 끊습니다.",
      lat:43.0668,lon:141.3600,q:"Sapporo Factory"},
-    {t:"17:40",e:"18:10",d:"30분",cat:"관광",title:"구 홋카이도청사 · 시계탑",
-     place:"주차 후 도보 구간",
-     note:"2025년 7월 재개관해 내부 관람도 가능합니다. 일몰이 17:20이라 해질녘 외관 사진이 잘 나옵니다.",
+    {t:"17:40",e:"17:55",d:"15분",cat:"이동",title:"삿포로 팩토리에서 구청사로",
+     place:"도보 약 1.1km",
+     note:""},
+    {t:"17:55",e:"18:20",d:"25분",cat:"관광",title:"구 홋카이도청사 · 시계탑",
+     place:"도보 구간",
+     note:"2025년 7월 재개관해 내부 관람도 가능합니다. 일몰이 17:20이라 이미 어두워진 뒤라 야간 조명이 켜진 외관을 보게 됩니다.",
      lat:43.0642,lon:141.3468,q:"홋카이도청 구 본청사"},
-    {t:"18:15",e:"19:00",d:"45분",cat:"관광",title:"오도리 공원 · TV타워 전망대",
-     place:"오도리 니시1초메",hours:"전망대 10:00~22:00",
-     note:"도착하면 이미 완전한 야경입니다. 오도리 공원을 걸어 TV타워까지 이어집니다.",
+    {t:"18:20",e:"18:35",d:"15분",cat:"이동",title:"구청사에서 TV타워로",
+     place:"도보 약 0.9km",
+     note:""},
+    {t:"18:35",e:"19:05",d:"30분",cat:"관광",title:"TV타워 전망대",
+     place:"오도리 니시1초메",hours:"10:00~22:00",
+     note:"완전한 야경입니다. 아래로 오텀 페스트 불빛이 1km에 걸쳐 이어지는 게 보입니다.",
      lat:43.0611,lon:141.3564,q:"삿포로 TV타워"},
-    {t:"19:15",e:"20:30",d:"1시간 15분",cat:"식사",title:"저녁",
-     place:"스스키노",
-     note:"징기스칸 또는 스프카레. 맥주 박물관에서 시음을 못 한 운전자는 여기서.",
-     lat:43.0550,lon:141.3530,q:"스스키노"},
-    {t:"20:45",e:"21:50",d:"1시간 5분",cat:"관광",title:"모이와야마 전망대",skip:true,
-     place:"생략 가능",hours:"10:30~22:00 · 상행 마지막 21:30",
-     note:"렌터카로 중턱 주차장까지 올라가 케이블카로 환승합니다. 관광도로는 11월 20일까지 운영. 부모님이 피로하시면 과감히 빼세요. TV타워로 삿포로 야경은 이미 확보한 상태입니다.",
-     lat:42.9806,lon:141.3253,q:"모이와야마 로프웨이"},
-    {t:"22:15",cat:"숙소",title:"삿포로 숙박",
-     place:"시내, 주차 가능한 호텔",
-     note:"호텔 주차 1박 1,200~1,800엔.",
-     lat:43.0640,lon:141.3500,q:"Sapporo Station"}
+    {t:"19:05",e:"19:15",d:"10분",cat:"이동",title:"TV타워에서 오도리 공원으로",
+     place:"도보 약 0.6km",
+     note:""},
+    {t:"19:15",e:"20:20",d:"1시간 5분",cat:"식사",title:"삿포로 오텀 페스트",
+     place:"오도리 공원 서4~8 · 10 · 11초메",hours:"10:00~20:30 · 라스트 오더 20:00",
+     note:"입장 무료. 약 1km에 300개 점포라 다 돌 수 없으니 갈 초메를 2~3곳만 정하세요. 산 음식은 그 초메 안에서만 먹을 수 있고 다른 구역으로 못 가져갑니다. 라스트 오더가 20:00이니 도착하면 먼저 주문부터 하세요. 야외 좌석이라 12~14도까지 떨어지니 겉옷 필수.",
+     lat:43.0606,lon:141.3490,q:"大通公園"},
+    {t:"20:20",cat:"숙소",title:"숙소 복귀",
+     place:"도보 또는 지하철",
+     note:"첫날부터 무리하지 않고 일찍 마무리합니다."}
   ]
 },
 {
@@ -477,6 +550,13 @@ var DAYS = [
   temp:"평년 11~20°", drive:"4시간", km:"230km",
   concept:"샤코탄 블루, 그리고 가스등 켜지는 운하",
   must:["카무이곶 마지막 입장 16:30"],
+  intro:{title:"샤코탄 블루와 북의 월가",
+    p:["샤코탄의 바다가 유독 파랗게 보이는 건 큰 강이 흘러들지 않아 부유물이 적고 수심이 깊기 때문이다. 홋카이도에서 해중공원 지구로 지정된 몇 안 되는 해안이다.",
+       "카무이곶의 카무이는 아이누어로 신이다. 에도 시대에는 여성이 배에 타면 바다가 노한다는 미신 때문에 1855년까지 여성의 출입이 금지됐고, 곶 입구에는 지금도 여인금제의 문이 남아 있다.",
+       "오타루는 청어로 번성한 도시다. 메이지에서 다이쇼에 걸쳐 홋카이도 경제의 중심이었고 은행이 몰려 북의 월가로 불렸다. 청어가 사라지며 쇠퇴했는데, 1980년대 운하를 메우려는 계획에 맞선 보존 운동이 지금의 풍경을 남겼다."],
+    tips:["카무이곶 게이트는 기상이 나쁘면 닫힌다. 바람이 강한 날은 출발 전에 확인하는 게 좋다",
+          "운하의 가스등은 63기. 해질녘에 점등되고 그때가 사진이 가장 잘 나온다",
+          "사카이마치 거리 상점은 대체로 10시에 열고 18시 전후에 닫는다"]},
   stops:[
     {t:"08:00",e:"10:30",d:"2시간 30분",cat:"이동",title:"삿포로 출발",
      place:"카무이곶까지 100km",
@@ -501,21 +581,29 @@ var DAYS = [
      place:"오타루 스시야도리",
      note:"삿포로로 돌아가 찾는 것보다 여기서 해결하는 게 시간상 이득입니다.",
      lat:43.1953,lon:140.9945,q:"小樽寿司屋通り"},
-    {t:"19:45",cat:"숙소",title:"삿포로 복귀",
-     place:"오타루에서 45분",
+    {t:"19:45",cat:"숙소",title:"숙소 복귀",
+     place:"Kana's Apartment · 오타루에서 45분",
      note:"내일 6시 출발입니다. 21:30 전에 취침하는 것이 3일차를 버티는 유일한 안전장치입니다.",
-     lat:43.0640,lon:141.3500,q:"Sapporo Station"}
+     lat:43.0394,lon:141.3808,q:"Shiroishi Ward 6-chome-3-12 Kitago 5 Jo Sapporo"}
   ]
 },
 {
   n:3, date:"9월 28일 (월)", city:"비에이 · 후라노", ic:"🌾", color:"#C67C10",
-  temp:"아침 5~10° · 낮 18°", drive:"6시간 30분", km:"450km",
-  concept:"14시간, 이번 여행에서 가장 긴 하루",
-  must:["17:00 닝구르 테라스 출발 엄수"],
+  temp:"아침 5~10° · 낮 18°", drive:"3시간 10분", km:"약 280km",
+  concept:"언덕과 라벤더, 그리고 후라노에서의 하룻밤",
+  must:["청의 호수는 오전 광선 때 방문"],
+  intro:{title:"언덕은 관광지가 아니라 밭이다",
+    p:["비에이의 패치워크는 디자인이 아니라 농사의 결과다. 밀, 감자, 콩, 옥수수를 돌려 심는 윤작 때문에 밭마다 색이 갈린다. 계절과 해에 따라 무늬가 매번 달라진다.",
+       "나무 이름들은 전부 광고에서 왔다. 켄과 메리의 나무는 1972년 닛산 스카이라인 광고, 세븐스타 나무는 1976년 담배 패키지, 마일드세븐 언덕도 담배 광고에 쓰이면서 이름이 붙었다.",
+       "청의 호수는 인공이다. 1988년 도카치다케 분화 뒤 화산 이류를 막으려 세운 콘크리트 블록에 물이 고여 생겼다. 흰수염 폭포에서 흘러드는 지하수의 알루미늄 성분이 햇빛을 산란시켜 그 색이 된다.",
+       "후라노의 라벤더도 원래는 향료용 작물이었다. 합성 향료에 밀려 사라질 뻔했는데 1976년 국철 달력에 팜 도미타의 밭이 실리면서 관광지가 됐다."],
+    tips:["언덕의 밭은 전부 사유지다. 들어가면 흙을 통해 병해가 퍼진다. 길에서만 본다",
+          "농로는 폭이 좁고 갓길이 무르다. 사진 찍으려 아무 데나 세우면 빠진다",
+          "9월 말 아침 기온은 5~10도. 청의 호수는 특히 춥다"]},
   stops:[
     {t:"06:00",e:"08:50",d:"2시간 50분",cat:"이동",title:"삿포로 출발",
      place:"비에이까지 170km",
-     note:"도오 고속도로로 북상. 사스가와 하이웨이 오아시스에서 15분 한 번 끊고 가세요."},
+     note:"도오 고속도로로 북상하고 사스가와 하이웨이 오아시스에서 15분 끊고 가세요."},
     {t:"08:50",e:"09:40",d:"50분",cat:"관광",title:"패치워크 언덕",
      place:"세븐스타 나무 · 켄과 메리의 나무",
      note:"북쪽에서 진입하니 자연스럽게 첫 동선이 됩니다. 차로 돌며 포인트마다 정차하는 코스라 다리 부담이 없습니다.",
@@ -539,35 +627,44 @@ var DAYS = [
      place:"나카후라노초",hours:"9:00~17:00 · 입장 · 주차 무료",
      note:"라벤더는 끝났지만 가을 채색의 밭에 살비아, 메리골드, 맨드라미가 한창입니다. 첫서리 내릴 때까지 피는 꽃들이라 9월이 마지막 시기입니다.",
      lat:43.4174,lon:142.4372,q:"ファーム富田"},
-    {t:"16:00",e:"17:00",d:"1시간",cat:"관광",title:"닝구르 테라스",
+    {t:"16:00",e:"17:20",d:"1시간 20분",cat:"관광",title:"닝구르 테라스",
      place:"신후라노 프린스호텔",hours:"9월 11:00~19:45",
-     note:"조명은 17:15경에 들어오지만 기다리면 조잔케이 도착이 20:45를 넘깁니다. 17:00에 출발하세요.",
+     note:"조명이 17:15경 들어옵니다. 오늘은 숙소가 차로 8분 거리라 서두르지 않고 점등까지 보고 나와도 됩니다.",
      lat:43.3032,lon:142.3838,q:"ニングルテラス"},
-    {t:"17:00",e:"20:00",d:"3시간",cat:"이동",title:"후라노에서 조잔케이",
-     place:"180km · 미카사IC 경유",
-     note:"어두워지면 사슴이 도로에 나오니 지방도 구간은 속도를 낮추세요. 되도록 고속도로를 쓰는 게 안전합니다."},
-    {t:"20:00",cat:"숙소",title:"조잔케이 온천",
-     place:"조잔케이 온천가",
-     note:"온천과 가이세키 저녁으로 3일간의 운전 피로를 풉니다. 단풍은 10월 중순이 절정이라 살짝 이른 시기입니다.",
-     lat:42.9400,lon:141.1650,q:"定山渓温泉"}
+    {t:"17:20",e:"17:35",d:"15분",cat:"이동",title:"닝구르 테라스에서 숙소로",
+     place:"6.5km · 차로 8분",
+     note:""},
+    {t:"17:35",e:"18:00",d:"25분",cat:"숙소",title:"라비스타 후라노 힐즈 체크인",
+     place:"아사히마치 5-14, 후라노 · JR 후라노역 도보 3분",hours:"체크인 15:00 이후 · 체크아웃 9/29 11:00 이전",
+     note:"9층 대욕장 '시운노유'는 나트륨-염화물천 천연온천으로 노천탕도 있습니다. 대욕장은 다음날 아침 10:00까지 이용 가능하니 저녁과 아침 두 번 즐길 수 있습니다. 저녁은 호텔 레스토랑이나 역 주변에서 해결하세요.",
+     lat:43.3400,lon:142.3823,q:"La Vista Furano Hills"}
   ]
 },
 {
-  n:4, date:"9월 29일 (화)", city:"조잔케이 · 귀국", ic:"♨️", color:"#7B5AA6",
-  temp:"평년 10~19°", drive:"1시간 40분", km:"90km",
-  concept:"아침 온천 한 번, 그리고 공항",
+  n:4, date:"9월 29일 (화)", city:"후라노 · 귀국", ic:"♨️", color:"#7B5AA6",
+  temp:"평년 10~19°", drive:"2시간 15분", km:"약 120km",
+  concept:"숙소에서 아침 온천, 그리고 공항",
   must:["주유 15분 잊지 말기"],
+  intro:{title:"언덕 위의 마지막 아침",
+    p:["라비스타 후라노 힐즈의 대욕장 '시운노유'는 9층 최상층에 있어 후라노 시내와 도카치다케 연봉이 그대로 내려다보입니다. 나트륨-염화물천이라 몸이 오래 따뜻하게 유지됩니다.",
+       "후라노역은 호텔에서 도보 3분 거리입니다. 원래 여기서 조식만 먹고 나가도 되지만, 대욕장이 다음날 아침 10시까지 운영되니 체크아웃 전에 한 번 더 몸을 담글 수 있습니다."],
+    tips:["대욕장은 새벽 1~5시 사이 청소로 잠시 닫습니다. 그 외 시간은 이용 가능합니다",
+          "조식은 뷔페이며 체크아웃 11시 전까지 여유가 있습니다",
+          "신치토세공항까지는 약 2시간, 점관IC에서 도토 자동차도로 올라탑니다"]},
   stops:[
-    {t:"07:00",e:"08:00",d:"1시간",cat:"관광",title:"아침 온천 · 후타미 츠리바시 산책",
-     place:"조잔케이",
-     note:"전날 늦게 도착했으니 무리하지 마세요. 후타미 츠리바시 다리까지만 짧게 다녀오는 정도로.",
-     lat:42.9421,lon:141.1595,q:"二見吊橋"},
-    {t:"08:00",e:"10:15",d:"2시간 15분",cat:"이동",title:"조잔케이에서 신치토세",
-     place:"90km · 주유 15분 포함",
-     note:"삿포로 남부에서 기타히로시마를 거쳐 도오 고속도로로 가는 경로가 예측 가능합니다. 시코쓰코를 끼는 국도 453호는 아침 안개와 사슴 가능성이 있어 마지막 날엔 피하세요."},
+    {t:"07:00",e:"07:45",d:"45분",cat:"관광",title:"아침 온천",
+     place:"라비스타 후라노 힐즈 9층 대욕장 '시운노유'",
+     note:"체크아웃 전 마지막으로 몸을 담그고 조식 뷔페까지 챙기세요.",
+     lat:43.3400,lon:142.3823,q:"La Vista Furano Hills"},
+    {t:"07:45",e:"08:00",d:"15분",cat:"숙소",title:"체크아웃",
+     place:"라비스타 후라노 힐즈",
+     note:""},
+    {t:"08:00",e:"10:15",d:"2시간 15분",cat:"이동",title:"후라노에서 신치토세",
+     place:"약 120km · 주유 15분 포함",
+     note:"점관IC에서 도토 자동차도에 올라 치토세에니와JCT를 거쳐 도오 자동차도로 남하합니다. 공항 근처에서 주유하고 들어가세요. 만탱크 반납 조건입니다."},
     {t:"10:15",e:"10:40",d:"25분",cat:"이동",title:"렌터카 반납",
      place:"공항 밖 영업소",hours:"예약 10:30 · 도착 목표 10:15",
-     note:"차량 점검과 주유 영수증 확인에 10~15분, 터미널까지 셔틀에 15~20분 걸립니다. 만탱크 반납 조건입니다.",
+     note:"차량 점검과 주유 영수증 확인에 10~15분, 터미널까지 셔틀에 15~20분 걸립니다.",
      lat:42.7869,lon:141.6664,q:"New Chitose Airport rental car"},
     {t:"10:55",e:"12:55",d:"2시간",cat:"이동",title:"공항 체크인",
      place:"신치토세공항 국제선",
@@ -589,32 +686,76 @@ var WAVE = '<svg class="wave" viewBox="0 0 400 9" preserveAspectRatio="none" ari
 function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 
 DAYS.forEach(function(day){
-  var h = document.createElement("div");
+  var sec = document.createElement("section");
+  sec.className = "dayblock";
+
+  var h = document.createElement("button");
+  h.type = "button";
   h.className = "dayhead";
   h.id = "day" + day.n;
+  h.setAttribute("aria-expanded", "true");
   h.innerHTML =
     '<span class="dot" style="background:'+day.color+'"></span>' +
     '<span class="ic">'+day.ic+'</span>' +
     '<span class="city" style="color:'+day.color+'">'+esc(day.city)+'</span>' +
     '<span class="date">'+esc(day.date)+'</span>' +
-    '<span class="temp">'+esc(day.temp)+'</span>';
-  host.appendChild(h);
+    '<span class="temp">'+esc(day.temp)+'</span>' +
+    '<span class="chev"></span>';
+  sec.appendChild(h);
+
+  var body = document.createElement("div");
+  body.className = "daybody";
+  sec.appendChild(body);
+  host.appendChild(sec);
+
+  h.dataset.open = "1";
+  h.addEventListener("click", function(){
+    var open = h.getAttribute("aria-expanded") === "true";
+    h.setAttribute("aria-expanded", open ? "false" : "true");
+    body.hidden = open;
+    h.dataset.open = open ? "0" : "1";
+  });
 
   var w = document.createElement("div");
   w.innerHTML = WAVE;
-  host.appendChild(w.firstChild);
+  body.appendChild(w.firstChild);
+
+  if (day.intro) {
+    var box = document.createElement("div");
+    box.className = "intro day-intro";
+    var bid = "intro" + day.n;
+    box.innerHTML =
+      '<button type="button" aria-expanded="false" aria-controls="'+bid+'">' +
+        esc(day.intro.title) + '<span>읽어보기</span></button>' +
+      '<div class="introbody" id="'+bid+'" hidden>' +
+        day.intro.p.map(function(t){ return '<p>'+esc(t)+'</p>'; }).join("") +
+        (day.intro.tips && day.intro.tips.length
+          ? '<h4>알고 가면 좋은 것</h4><ul>' +
+            day.intro.tips.map(function(t){ return '<li>'+esc(t)+'</li>'; }).join("") + '</ul>'
+          : "") +
+      '</div>';
+    var ib = box.querySelector("button");
+    var ibody = box.querySelector(".introbody");
+    ib.addEventListener("click", function(){
+      var open = ibody.hidden;
+      ibody.hidden = !open;
+      ib.setAttribute("aria-expanded", open ? "true" : "false");
+      ib.querySelector("span").textContent = open ? "접기" : "읽어보기";
+    });
+    body.appendChild(box);
+  }
 
   var c = document.createElement("div");
   c.className = "concept";
   c.innerHTML =
     '<div class="lb">오늘의 컨셉</div><h3>'+esc(day.concept)+'</h3>' +
     '<div class="must">꼭 지킬 것 ' + day.must.map(function(m){return '<b>'+esc(m)+'</b>';}).join(" ") + '</div>';
-  host.appendChild(c);
+  body.appendChild(c);
 
   var db = document.createElement("div");
   db.className = "drivebar";
   db.innerHTML = '<b>'+esc(day.drive)+'</b> 운전 · '+esc(day.km);
-  host.appendChild(db);
+  body.appendChild(db);
 
   var pin = 0;
   day.stops.forEach(function(s, i){
@@ -647,21 +788,71 @@ DAYS.forEach(function(day){
       html += '<span class="pinno" style="background:'+day.color+'">'+pin+'</span>';
     }
     el.innerHTML = html;
-    host.appendChild(el);
+    body.appendChild(el);
   });
 });
 
 /* =========================================================
-   시계
+   상단바: 현재 시각 · D-day · 환율
    ========================================================= */
-function clocks(){
-  var now = new Date();
-  var s = now.toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit",hour12:false,timeZone:"Asia/Seoul"});
-  var j = now.toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit",hour12:false,timeZone:"Asia/Tokyo"});
-  document.getElementById("ck-seoul").textContent = s;
-  document.getElementById("ck-spk").textContent = j;
+var DEP = new Date("2026/09/26 09:20");   /* ICN 출발 */
+var CTS = new Date("2026/09/29 12:55");   /* CTS 출발 */
+var RET = new Date("2026/09/29 16:00");
+var DAY_STARTS = [new Date("2026/09/26 00:00"), new Date("2026/09/27 00:00"),
+                  new Date("2026/09/28 00:00"), new Date("2026/09/29 00:00")];
+
+function fmtRemain(ms){
+  if (ms <= 0) return null;
+  var d = Math.floor(ms / 86400000);
+  var h = Math.floor(ms % 86400000 / 3600000);
+  var m = Math.floor(ms % 3600000 / 60000);
+  if (d > 0) return d + "일 " + h + "시간";
+  if (h > 0) return h + "시간 " + m + "분";
+  return m + "분";
 }
-clocks(); setInterval(clocks, 20000);
+
+function topbarTick(){
+  var now = new Date();
+
+  var depEl = document.getElementById("fl-dep");
+  var retEl = document.getElementById("fl-ret");
+
+  var msDep = DEP - now;
+  var msCts = CTS - now;
+
+  if (msDep > 0) {
+    depEl.textContent = fmtRemain(msDep) + " 남음";
+  } else if (now <= RET) {
+    var n = 1;
+    for (var i = 0; i < DAY_STARTS.length; i++) if (now >= DAY_STARTS[i]) n = i + 1;
+    depEl.textContent = n + "일차";
+  } else {
+    depEl.textContent = "여행 종료";
+  }
+
+  if (msCts > 0 && msDep <= 0) {
+    retEl.textContent = fmtRemain(msCts) + " 남음";
+  } else if (msCts > 0) {
+    retEl.textContent = "D-" + Math.ceil(msCts / 86400000);
+  } else {
+    retEl.textContent = "출발 완료";
+  }
+}
+topbarTick();
+setInterval(topbarTick, 30000);
+
+/* 환율: 실시간 조회, 막히면 기본값 유지 */
+(function(){
+  if (!window.fetch) return;
+  fetch("https://api.frankfurter.app/latest?from=JPY&to=KRW", {cache:"no-store"})
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(d){
+      if (!d || !d.rates || !d.rates.KRW) return;
+      var v = Math.round(d.rates.KRW * 100);
+      document.getElementById("fx").textContent = "₩" + v.toLocaleString();
+    })
+    .catch(function(){});
+})();
 
 /* =========================================================
    지금 진행 중인 일정
@@ -720,11 +911,18 @@ document.getElementById("days").addEventListener("click", function(e){
   if (!card || !card.dataset.lat) return;
   var d = +card.dataset.day;
   if (sel !== 0 && sel !== d) setDay(d, false);
+  var mapwrapEl = document.getElementById("mapwrap");
+  var wasFolded = !!(mapwrapEl && mapwrapEl.classList.contains("folded"));
   if (unfoldMap) unfoldMap();
-  if (leafMap) {
-    leafMap.flyTo([+card.dataset.lat, +card.dataset.lon],
-      Math.max(leafMap.getZoom(), 13), {duration:0.9});
+  var lat = +card.dataset.lat, lon = +card.dataset.lon;
+  function fly(){
+    if (!leafMap) return;
+    leafMap.invalidateSize();
+    leafMap.flyTo([lat, lon], Math.max(leafMap.getZoom(), 13), {duration:0.9});
   }
+  /* 접혀 있던 지도를 펼치는 중이면, 펼침 트랜지션(.25s)이 끝나
+     실제 크기가 잡힌 뒤에 이동해야 좌표가 정확히 맞는다 */
+  if (wasFolded) setTimeout(fly, 320); else fly();
   flashStop(card);
 });
 
@@ -736,8 +934,14 @@ var CENTER_RATIO = 0.45;
 function focusStop(elId){
   var el = document.getElementById(elId);
   if (!el) return;
+  var body = el.closest && el.closest(".daybody");
+  if (body && body.hidden) {
+    body.hidden = false;
+    var head = body.previousElementSibling;
+    if (head) head.setAttribute("aria-expanded", "true");
+  }
   var vh = window.innerHeight || document.documentElement.clientHeight;
-  var clocksEl = document.querySelector(".clocks");
+  var clocksEl = document.querySelector(".topbar");
   var mapEl = document.getElementById("mapwrap");
   var covered = (clocksEl ? clocksEl.getBoundingClientRect().height : 0)
               + (mapEl ? mapEl.getBoundingClientRect().height : 0);
@@ -947,30 +1151,68 @@ function loadScript(src){
   });
 }
 
+/* 스크립트는 페이지 로드와 동시에 미리 받아둔다 (약 900KB) */
+var mlReady = null;
+function preloadMapLibre(){
+  if (mlReady) return mlReady;
+  if (window.L && L.maplibreGL) { mlReady = Promise.resolve(); return mlReady; }
+  mlReady = loadScript("https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.js")
+    .then(function(){
+      return loadScript("https://cdn.jsdelivr.net/npm/@maplibre/maplibre-gl-leaflet@0.1.4/leaflet-maplibre-gl.js");
+    });
+  return mlReady;
+}
+if (MAPTILER_KEY && window.Promise) preloadMapLibre().catch(function(){});
+
+function setMapBusy(on){
+  var wrap = document.getElementById("mapbox");
+  if (!wrap) return;
+  var el = document.getElementById("mapbusy");
+  if (on && !el) {
+    el = document.createElement("div");
+    el.id = "mapbusy";
+    el.textContent = "지도 불러오는 중";
+    wrap.appendChild(el);
+  } else if (!on && el) {
+    el.remove();
+  }
+}
+
 function tryVector(){
   if (!MAPTILER_KEY || !leafMap || !window.Promise) return Promise.resolve(false);
   var style = "https://api.maptiler.com/maps/" + MAPTILER_MAP +
               "/style.json?key=" + MAPTILER_KEY;
-  /* 스타일이 실제로 받아지는지 먼저 확인 (키 오류·플랜 제한 조기 감지) */
+  setMapBusy(true);
   return fetch(style, {cache:"no-store"})
     .then(function(r){ if (!r.ok) throw new Error("style " + r.status); })
-    .then(function(){
-      if (window.L && L.maplibreGL) return;
-      return loadScript("https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.js")
-        .then(function(){
-          return loadScript("https://cdn.jsdelivr.net/npm/@maplibre/maplibre-gl-leaflet@0.1.4/leaflet-maplibre-gl.js");
-        });
-    })
+    .then(function(){ return preloadMapLibre(); })
     .then(function(){
       if (!L.maplibreGL) throw new Error("binding missing");
       vectorLayer = L.maplibreGL({style:style, attribution:'© MapTiler © OpenStreetMap contributors'});
       vectorLayer.addTo(leafMap);
-      if (landLayer && leafMap.hasLayer(landLayer)) leafMap.removeLayer(landLayer);
-      setTimeout(function(){ leafMap.invalidateSize(); }, 200);
-      return true;
+      /* 벡터 지도가 실제로 한 번 그려진 뒤에 해안선을 치운다.
+         isStyleLoaded() 는 이 빌드에서 신뢰할 수 없으므로 idle 을 쓴다. */
+      return new Promise(function(res, rej){
+        var gl = vectorLayer.getMaplibreMap && vectorLayer.getMaplibreMap();
+        var done = false;
+        var t = setTimeout(function(){ if (!done) { done = true; rej(new Error("render timeout")); } }, 40000);
+        function ok(){
+          if (done) return;
+          done = true; clearTimeout(t);
+          if (landLayer && leafMap.hasLayer(landLayer)) leafMap.removeLayer(landLayer);
+          setMapBusy(false);
+          setTimeout(function(){ leafMap.invalidateSize(); }, 150);
+          res(true);
+        }
+        if (!gl) { setTimeout(ok, 3000); return; }
+        gl.once("idle", ok);
+        gl.once("load", function(){ setTimeout(ok, 400); });
+      });
     })
     .catch(function(e){
+      setMapBusy(false);
       if (vectorLayer) { try { leafMap.removeLayer(vectorLayer); } catch(_){} vectorLayer = null; }
+      if (landLayer && !leafMap.hasLayer(landLayer)) landLayer.addTo(leafMap);
       return false;
     });
 }
@@ -1062,6 +1304,7 @@ else {
   function apply(){
     wrap.classList.toggle("folded", folded);
     btn.textContent = folded ? "지도 펼치기" : "지도 접기";
+    btn.classList.toggle("down", folded);
     if (!folded && leafMap) setTimeout(function(){ leafMap.invalidateSize(); }, 280);
   }
   apply();
@@ -1078,15 +1321,61 @@ else {
   });
 })();
 
-/* 읽어보기 */
+/* 지역 소개 펼치기 */
 (function(){
-  var b = document.getElementById("readtoggle"), body = document.getElementById("readbody");
+  var b = document.getElementById("introtoggle");
+  var body = document.getElementById("introbody");
+  if (!b || !body) return;
   b.addEventListener("click", function(){
     var open = body.hidden;
     body.hidden = !open;
     b.setAttribute("aria-expanded", open ? "true" : "false");
     b.querySelector("span").textContent = open ? "접기" : "읽어보기";
   });
+})();
+
+/* =========================================================
+   일정 검색
+   ========================================================= */
+(function(){
+  var q = document.getElementById("q");
+  var cnt = document.getElementById("qcount");
+  if (!q) return;
+  var timer = null;
+
+  function run(){
+    var t = q.value.trim().toLowerCase();
+    document.body.classList.toggle("searching", !!t);
+    var total = 0;
+    Array.prototype.forEach.call(document.querySelectorAll(".dayblock"), function(sec){
+      var head = sec.querySelector(".dayhead");
+      var body = sec.querySelector(".daybody");
+      var hit = 0;
+      Array.prototype.forEach.call(body.querySelectorAll(".ev"), function(c){
+        var ok = !t || c.textContent.toLowerCase().indexOf(t) >= 0;
+        c.hidden = !ok;
+        if (ok) hit++;
+      });
+      if (t) {
+        sec.hidden = (hit === 0);
+        head.setAttribute("aria-expanded", "true");
+        body.hidden = false;
+      } else {
+        sec.hidden = false;
+        var open = head.dataset.open !== "0";
+        head.setAttribute("aria-expanded", open ? "true" : "false");
+        body.hidden = !open;
+      }
+      total += hit;
+    });
+    cnt.textContent = t ? (total + "개") : "";
+  }
+
+  q.addEventListener("input", function(){
+    clearTimeout(timer);
+    timer = setTimeout(run, 120);
+  });
+  q.addEventListener("search", run);
 })();
 
 /* =========================================================
@@ -1099,22 +1388,6 @@ var LIST = [
     ["여권",""],
     ["예약자 명의 신용카드","보증금 예치용"],
     ["렌터카 예약 확인서","차종 · 옵션 · 반납 지점"]
-  ]},
-  {g:"출발 전 처리", items:[
-    ["Visit Japan Web 등록","입국심사와 세관 QR"],
-    ["조잔케이 온천 예약",""],
-    ["삿포로 2박 예약","주차 가능 여부 확인"],
-    ["면책보상 · NOC 신청",""],
-    ["ETC 카드 · HEP 4일권 신청",""],
-    ["맥주 박물관 프리미엄 투어 예약","자유관람은 예약 불필요"]
-  ]},
-  {g:"짐", items:[
-    ["eSIM 또는 포켓와이파이",""],
-    ["구글맵 오프라인 지도","삿포로 · 비에이 · 후라노 · 샤코탄"],
-    ["맵코드 메모","주요 7개 목적지"],
-    ["부모님 겉옷","비에이 아침 5~10도"],
-    ["걷기 편한 신발","카무이곶 오르막과 계단"],
-    ["차량용 충전 케이블",""]
   ]}
 ];
 var store = {};
